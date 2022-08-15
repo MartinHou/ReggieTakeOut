@@ -1,10 +1,18 @@
 package com.martin.reggie.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.martin.reggie.common.R;
+import com.martin.reggie.entitty.Employee;
 import com.martin.reggie.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.DigestUtils;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @RestController
@@ -13,4 +21,42 @@ public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
+
+    /**
+     * 员工登陆
+     * @param request 用于获取session，保存登录信息
+     * @param employee 接收json数据，封装成Employee对象（名称属性对应）
+     * @return R响应结果
+     */
+    @PostMapping("/login")
+    public R<Employee> login(HttpServletRequest request, @RequestBody Employee employee){
+        //1.将页面提交的密码进行md5加密
+        String password = employee.getPassword();
+        password = DigestUtils.md5DigestAsHex(password.getBytes());
+
+        //2.根据用户名查询数据库
+        LambdaQueryWrapper<Employee> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Employee::getUsername,employee.getUsername());
+        Employee emp = employeeService.getOne(wrapper);
+
+        //3.若未查到，返回失败结果
+        if(emp==null){
+            return R.error("登录失败");
+       }
+
+        //4.比对密码
+        if(!emp.getPassword().equals(password)){
+            return R.error("登录失败");
+        }
+
+        //5.查看员工状态是否可用
+        if(emp.getStatus()==0){
+            return R.error("账号已禁用");
+        }
+
+        //6.成功，员工id放入session，并返回成功结果
+        request.getSession().setAttribute("employee",employee.getId());
+        return R.success(emp);
+
+    }
 }
