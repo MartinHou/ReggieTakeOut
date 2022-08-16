@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 
 @Slf4j
 @Configuration
-public class WebMvcConfig extends WebMvcConfigurationSupport {
+public class  WebMvcConfig extends WebMvcConfigurationSupport {
 
     // 设置静态资源映射（页面请求映射）
     @Override
