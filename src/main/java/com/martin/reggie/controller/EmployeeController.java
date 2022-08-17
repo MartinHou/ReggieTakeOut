@@ -55,7 +55,7 @@ public class EmployeeController {
         }
 
         //6.成功，员工id放入session，并返回成功结果
-        request.getSession().setAttribute("employee",employee.getId());
+        request.getSession().setAttribute("employee",emp.getId());
         return R.success(emp);
     }
 
