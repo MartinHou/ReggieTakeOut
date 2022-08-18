@@ -24,15 +24,14 @@ public class  WebMvcConfig extends WebMvcConfigurationSupport {
 
     /**
      * 扩展MVC的消息转换器
-     * @param converters
      */
     @Override
     protected void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         // 创建消息转换器对象
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         // 设置消息转换器，底层用Jackson将Java转成json
-        converter.setObjectMapper(new JacksonObjectMapper());
+        converter.setObjectMapper(new JacksonObjectMapper());   //主要是Long转String
         // 将上面的转换器对象追加到MVC转换器集合中
-        converters.add(0, converter);
+        converters.add(0, converter);   // 插入0号位意味着最先使用自己的转换器（还有8个默认转换器）
     }
 }

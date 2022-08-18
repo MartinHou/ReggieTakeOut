@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Slf4j
 @RestController
@@ -89,10 +90,6 @@ public class EmployeeController {
 
     /**
      * 员工信息分页查询
-     * @param page
-     * @param pageSize
-     * @param name
-     * @return
      */
     @GetMapping("/page")
     public R<Page> page(int page, int pageSize, String name){
@@ -111,5 +108,20 @@ public class EmployeeController {
         employeeService.page(pageInfo,queryWrapper);
 
         return R.success(pageInfo);
+    }
+
+    /**
+     * 根据id修改员工信息
+     */
+    @PutMapping
+    public R<String> update(HttpServletRequest request, @RequestBody Employee employee) {
+        //修改修改人信息
+        Long updateUser = (Long) request.getSession().getAttribute("employee");
+        employee.setUpdateUser(updateUser);
+        //更新修改时间
+        employee.setUpdateTime(LocalDateTime.now());
+        //更新
+        employeeService.updateById(employee);
+        return R.success("员工信息修改成功");
     }
 }
