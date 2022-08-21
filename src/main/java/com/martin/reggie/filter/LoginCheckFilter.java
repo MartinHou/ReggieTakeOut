@@ -1,6 +1,7 @@
 package com.martin.reggie.filter;
 
 import com.alibaba.fastjson.JSON;
+import com.martin.reggie.common.BaseContext;
 import com.martin.reggie.common.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
@@ -45,7 +46,9 @@ public class LoginCheckFilter implements Filter {
         }
         //4.需要处理：如果已经登录，则直接放行
         if (request.getSession().getAttribute("employee") != null) {
-            log.info("用户已登录:id为{}",request.getSession().getAttribute("employee"));
+            Long empId = (Long) request.getSession().getAttribute("employee");
+            BaseContext.setCurrentId(empId); // 将当前登录用户id存到线程唯一的记录类中，方便后续读取id，就不用HttpServletRequest了
+            log.info("用户已登录:id为{}",empId);
             filterChain.doFilter(request,response);
             return;
         }

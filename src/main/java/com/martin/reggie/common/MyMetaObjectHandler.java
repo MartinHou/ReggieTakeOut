@@ -3,9 +3,10 @@ package com.martin.reggie.common;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
-import org.springframework.context.annotation.ComponentScan;
+import org.apache.tomcat.jni.Local;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
@@ -21,17 +22,20 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
     public void insertFill(MetaObject metaObject) {
         log.info("公共字段自动填充[insert]");
         log.info(metaObject.toString());
-        metaObject.setValue("createTime", LocalTime.now());
-        metaObject.setValue("updateTime", LocalTime.now());
-        metaObject.setValue("createUser", new Long(1));
-        metaObject.setValue("updateUser", new Long(1));
+        metaObject.setValue("createTime", LocalDateTime.now());
+        metaObject.setValue("updateTime", LocalDateTime.now());
+        metaObject.setValue("createUser", BaseContext.getCurrentId());
+        metaObject.setValue("updateUser", BaseContext.getCurrentId());
     }
 
+    /**
+     * 更新操作自动化
+     */
     @Override
     public void updateFill(MetaObject metaObject) {
         log.info("公共字段自动填充[update]");
         log.info(metaObject.toString());
-        metaObject.setValue("updateTime", LocalTime.now());
-        metaObject.setValue("updateUser", new Long(1));
+        metaObject.setValue("updateTime", LocalDateTime.now());
+        metaObject.setValue("updateUser", BaseContext.getCurrentId());
     }
 }
