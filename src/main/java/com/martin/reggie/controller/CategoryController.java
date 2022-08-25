@@ -40,4 +40,10 @@ public class CategoryController {
         categoryService.page(pageInfo,queryWrapper);
         return R.success(pageInfo);
     }
+
+    @DeleteMapping
+    public R<String> delete(Long ids) {
+        categoryService.remove(ids);
+        return R.success("分类信息删除成功");
+    }
 }
