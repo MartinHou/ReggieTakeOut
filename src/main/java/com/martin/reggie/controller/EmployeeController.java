@@ -91,11 +91,11 @@ public class EmployeeController {
      * 员工信息分页查询
      */
     @GetMapping("/page")
-    public R<Page> page(int page, int pageSize, String name){
+    public R<Page<Employee>> page(int page, int pageSize, String name){
         log.info("page={},pagesize={},name={}",page,pageSize,name);
 
         //创建分页器
-        Page pageInfo = new Page(page,pageSize);
+        Page<Employee> pageInfo = new Page<>(page,pageSize);
         //创建条件构造器
         LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper<>();
         //添加name相关条件
