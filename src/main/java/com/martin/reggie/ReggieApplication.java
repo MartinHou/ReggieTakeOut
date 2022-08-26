@@ -4,10 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Slf4j  // 开启日志,任何类上加此注解,都可在类中使用log进行控制台输出
 @SpringBootApplication
 @ServletComponentScan   //扫filter
+@EnableTransactionManagement //开启事务（激活Transactional）
 public class ReggieApplication {
     public static void main(String[] args) {
         SpringApplication.run(ReggieApplication.class, args);
