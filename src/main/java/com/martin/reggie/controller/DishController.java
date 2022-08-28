@@ -89,4 +89,14 @@ public class DishController {
         DishDto dishDto = dishService.getByIdWithFlavor(id);
         return R.success(dishDto);
     }
+
+    /**
+     * 修改菜品
+     * @param dishDto 接收前端参数，由于多了一个DishFlavor，故不能用Dish而要用DishDto接收（数据传输单元）
+     */
+    @PutMapping
+    public R<String> update(@RequestBody DishDto dishDto) {
+        dishService.updateWithFlavor(dishDto);
+        return R.success("修改菜品成功");
+    }
 }
