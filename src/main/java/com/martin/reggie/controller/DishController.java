@@ -9,6 +9,7 @@ import com.martin.reggie.entitty.Dish;
 import com.martin.reggie.service.CategoryService;
 import com.martin.reggie.service.DishFlavorService;
 import com.martin.reggie.service.DishService;
+import com.sun.org.apache.bcel.internal.generic.RETURN;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,5 +99,21 @@ public class DishController {
     public R<String> update(@RequestBody DishDto dishDto) {
         dishService.updateWithFlavor(dishDto);
         return R.success("修改菜品成功");
+    }
+
+    /**
+     * 根据条件查询菜品数据
+     * @param dish 通过categoryId进行获取dish
+     */
+    @GetMapping("/list")
+    public R<List<Dish>> list(Dish dish) {
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(dish.getCategoryId()!=null,Dish::getCategoryId, dish.getCategoryId());
+        //只要启售
+        queryWrapper.eq(Dish::getStatus, 1);
+        //排序条件
+        queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+        List<Dish> list = dishService.list(queryWrapper);
+        return R.success(list);
     }
 }
