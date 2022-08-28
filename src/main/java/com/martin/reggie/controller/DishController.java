@@ -80,4 +80,13 @@ public class DishController {
 //        return R.success(pageInfo);   Dish无分类名称，所以不能直接返回pageInfo,只有DishDto才有
         return R.success(dtoPageInfo);
     }
+
+    /**
+     * 根据id查询菜品信息和口味信息（dto）
+     */
+    @GetMapping("/{id}")
+    public R<DishDto> get(@PathVariable Long id) {
+        DishDto dishDto = dishService.getByIdWithFlavor(id);
+        return R.success(dishDto);
+    }
 }
