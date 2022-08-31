@@ -30,11 +30,13 @@ public class LoginCheckFilter implements Filter {
         String requestURI = request.getRequestURI();
         log.info("拦截到请求：{}",requestURI);
         //定义不需要处理的请求路径
-        String[] uris =new String[]{
+        String[] uris = new String[]{
                 "/employee/login",
                 "/employee/logout",
                 "/backend/**",
-                "/front/**"
+                "/front/**",
+                "/user/login",
+                "/user/sendMsg"
         };
         //2.判断此请求是否需要处理
         boolean ck = check(uris, requestURI);
@@ -44,11 +46,18 @@ public class LoginCheckFilter implements Filter {
             filterChain.doFilter(request,response);
             return;
         }
-        //4.需要处理：如果已经登录，则直接放行
+        //4-1.需要处理：如果已经登录，则直接放行（PC浏览器）
         if (request.getSession().getAttribute("employee") != null) {
             Long empId = (Long) request.getSession().getAttribute("employee");
             BaseContext.setCurrentId(empId); // 将当前登录用户id存到线程唯一的记录类中，方便后续读取id，就不用HttpServletRequest了
             log.info("用户已登录:id为{}",empId);
+            filterChain.doFilter(request,response);
+            return;
+        }
+        //4-2.需要处理：手机页面
+        if (request.getSession().getAttribute("user") != null) {
+            Long userId = (Long) request.getSession().getAttribute("user");
+            BaseContext.setCurrentId(userId);
             filterChain.doFilter(request,response);
             return;
         }
