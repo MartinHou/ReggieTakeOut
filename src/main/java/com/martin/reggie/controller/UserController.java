@@ -1,5 +1,6 @@
 package com.martin.reggie.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.martin.reggie.common.R;
 import com.martin.reggie.entitty.User;
 import com.martin.reggie.service.UserService;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -34,5 +36,34 @@ public class UserController {
             return R.success("手机短信验证码发送成功");
         }
         return R.error("手机短信验证码发送失败");
+    }
+
+    /**
+     * 前端登录
+     * @param map 手机号-验证码 数据结构
+     */
+    @PostMapping("/login")
+    public R<User> login(@RequestBody Map<String,String> map, HttpSession session) {
+        //获取手机号
+        String phone = map.get("phone");
+        //获取验证码
+        String code = map.get("code");
+        //session中获取正确的验证码
+        Object codeInSession = session.getAttribute(phone);
+        //比对验证码,成功则登录
+        if (codeInSession != null && codeInSession.equals(code)) {
+            //判断是否手机号为新用户，是则注册
+            LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(User::getPhone, phone);
+            User user = userService.getOne(queryWrapper);
+            if(user==null){
+                user = new User();
+                user.setPhone(phone);
+                userService.save(user);
+            }
+            session.setAttribute("user",user.getId());
+            return R.success(user);
+        }
+        return R.error("登录失败");
     }
 }
