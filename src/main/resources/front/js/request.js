@@ -4,7 +4,7 @@
   const service = axios.create({
     // axios中请求配置有baseURL选项，表示请求URL公共部分
     baseURL: '/',
-    // 超时(调试情况下应高一些)
+    // 超时
     timeout: 1000000
   })
   // request拦截器
